@@ -41,4 +41,12 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function reservasUsuarios(){
+        return $this->hasMany(ReservasUsuario::class);
+    }
+
+    public function reservas(){
+        return $this->hasMany(Reserva::class);
+    }
 }
