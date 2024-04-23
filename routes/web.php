@@ -14,7 +14,11 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return ['Laravel' => app()->version()];
+    return view('app'); // Asegúrate de reemplazar 'tuVistaPrincipal' con el nombre de tu vista principal de Vue.
 });
 
-require __DIR__.'/auth.php';
+Route::get('/{any}', function () {
+    return view('app'); // Asegúrate de reemplazar 'tuVistaPrincipal' con el nombre de tu vista principal de Vue.
+})->where('any', '.*');
+
+require __DIR__ . '/auth.php';
