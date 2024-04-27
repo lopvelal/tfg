@@ -13,9 +13,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('app'); // Asegúrate de reemplazar 'tuVistaPrincipal' con el nombre de tu vista principal de Vue.
-});
+// Route::get('/', function () {
+//     return view('app'); // Asegúrate de reemplazar 'tuVistaPrincipal' con el nombre de tu vista principal de Vue.
+// });
 
 Route::get('/{any}', function () {
     return view('app'); // Asegúrate de reemplazar 'tuVistaPrincipal' con el nombre de tu vista principal de Vue.
