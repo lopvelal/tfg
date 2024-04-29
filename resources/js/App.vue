@@ -1,15 +1,28 @@
 <script setup>
 
-import { onMounted } from 'vue'
+import { computed, defineAsyncComponent, onMounted } from 'vue'
 import { initFlowbite } from 'flowbite'
+import { useRoute } from 'vue-router';
+
 // initialize components based on data attribute selectors
-onMounted(async () => {
+
+const Navbar = defineAsyncComponent(() => import('./components/Navbar.vue'))
+
+const route = useRoute()
+
+const mostrarNavbar = computed(() => route.name !== 'login')
+
+onMounted(() => {
     initFlowbite();
-})
+});
+
 </script>
 
 <template>
-    <main>
+    <header>
+        <Navbar v-if="mostrarNavbar" />
+    </header>
+    <main :class="{ 'p-4 sm:ml-64': mostrarNavbar }">
         <RouterView />
     </main>
 </template>
