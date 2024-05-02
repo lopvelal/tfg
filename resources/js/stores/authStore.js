@@ -22,12 +22,10 @@ const useAuthStore = defineStore('auth', () => {
 
     const checkAuthentication = () => {
         const logged = localStorage.getItem('logged')
-
         if (!logged) {
             handleLogout()
             return { ok: false, message: 'Usuario no logueado' }
         } else {
-            getUser()
             return { ok: true }
         }
     }
@@ -42,7 +40,7 @@ const useAuthStore = defineStore('auth', () => {
             status.value = 'authenticated'
         } catch (error) {
             localStorage.removeItem('logged')
-            router.push({name: 'login'})
+            router.push({ name: 'login' })
         }
     }
 
@@ -52,7 +50,7 @@ const useAuthStore = defineStore('auth', () => {
         user.value = null;
         permisos.value = null
         status.value = 'no-authenticated'
-        router.push({name: 'login'});
+        router.push({ name: 'login' });
     }
 
     const handleLogin = async (data) => {
@@ -64,6 +62,7 @@ const useAuthStore = defineStore('auth', () => {
                 email: data.email,
                 password: data.password
             })
+            getUser()
             localStorage.setItem('logged', true)
             router.push('/')
         } catch (error) {

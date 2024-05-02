@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <h1>Layout de Usuarios</h1>
+    <div class="mt-3">
+        <h1 class="text-center">Configuración de usuario</h1>
     </div>
     <RouterView></RouterView>
 </template>

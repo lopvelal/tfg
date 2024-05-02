@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, ref } from 'vue';
-import useAuthStore from '../store/authStore';
+import useAuthStore from '../stores/authStore';
 
 const authStore = new useAuthStore();
 

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\Auth\ChangePasswordController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,6 +21,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
         return $request->user();
     });
 
-    Route::get('/user/permissions', [PermissionController:: class, 'getUserPermissions']);
-
+    Route::get('/user/permissions', [PermissionController::class, 'getUserPermissions']);
+    Route::put('/user/changePassword', [ChangePasswordController::class, 'changePassword']);
 });
