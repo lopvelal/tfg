@@ -22,7 +22,7 @@ class ReservaFactory extends Factory
             'titulo' => $this->faker->sentence(), // Genera una oración como título
             'descripcion' => $this->faker->optional()->paragraph(), // Genera un párrafo opcional como descripción
             'fecha_reserva' => $this->faker->dateTimeBetween('+1 week', '+1 month'), // Genera una fecha entre la próxima semana y el próximo mes
-            'user_id' => User::inRandomOrder()->first()->id, // Asigna un user_id vinculando un User generado por su factory
+            'user_id' => User::role('profesor')->inRandomOrder()->first()->id, // Asigna un user_id vinculando un User generado por su factory
             'aula_id' => Aula::inRandomOrder()->first()->id // Asigna un aula_id vinculando un Aula generado por su factory
         ];
     }

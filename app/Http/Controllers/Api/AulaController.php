@@ -13,15 +13,7 @@ class AulaController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return Aula::paginate(5);
     }
 
     /**
@@ -37,7 +29,7 @@ class AulaController extends Controller
      */
     public function show(Aula $aula)
     {
-        //
+        return $aula;
     }
 
     /**

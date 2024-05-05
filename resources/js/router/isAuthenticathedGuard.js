@@ -1,13 +1,12 @@
 import useAuthStore from "../stores/authStore"
 
 
-const isAuthenticatedGuard = (to, from, next) => {
+const isAuthenticatedGuard = async(to, from, next) => {
 
     const authStore = useAuthStore()
-
     if (authStore.checkAuthentication().ok) {
         if (!authStore.user) {
-            authStore.getUser()
+            await authStore.getUser()
         }
         next()
     } else {

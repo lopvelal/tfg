@@ -13,10 +13,10 @@
                     <RouterLink :to="{name: 'home'}" class="nav-link" active-class="active">
                         Inicio
                     </RouterLink>
-                    <RouterLink :to="{name: 'user'}" class="nav-link" active-class="active">
+                    <RouterLink :to="{name: 'aulas'}" class="nav-link" active-class="active">
                         Aulas
                     </RouterLink>
-                    <RouterLink :to="{name: 'user'}" class="nav-link" active-class="active">
+                    <RouterLink :to="{name: 'reservas'}" class="nav-link" active-class="active">
                         Reservas
                     </RouterLink>
                     <RouterLink :to="{name: 'user'}" class="nav-link" active-class="active">

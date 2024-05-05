@@ -13,15 +13,7 @@ class ReservaUsuariosController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return ReservasUsuario::paginate(10);
     }
 
     /**
@@ -61,6 +53,6 @@ class ReservaUsuariosController extends Controller
      */
     public function destroy(ReservasUsuario $reservasUsuario)
     {
-        //
+        return response()->json($reservasUsuario->delete() ? 'true' : 'false');
     }
 }
