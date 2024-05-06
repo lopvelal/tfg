@@ -15,7 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('titulo');
             $table->text('descripcion')->nullable();
-            $table->dateTime('fecha_reserva');
+            $table->date('fecha');
+            $table->time('hora_inicio');
+            $table->integer('duracion');
             $table->foreignId('user_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('aula_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();

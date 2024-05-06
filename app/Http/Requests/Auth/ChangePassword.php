@@ -6,7 +6,6 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
-
 class ChangePassword extends FormRequest
 {
     /**

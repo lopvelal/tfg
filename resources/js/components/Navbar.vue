@@ -10,16 +10,16 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav ms-auto">
-                    <RouterLink :to="{name: 'home'}" class="nav-link" active-class="active">
+                    <RouterLink :to="{ name: 'home' }" class="nav-link" active-class="active">
                         Inicio
                     </RouterLink>
-                    <RouterLink :to="{name: 'aulas'}" class="nav-link" active-class="active">
+                    <RouterLink :to="{ name: 'aulas' }" class="nav-link" active-class="active">
                         Aulas
                     </RouterLink>
-                    <RouterLink :to="{name: 'reservas'}" class="nav-link" active-class="active">
+                    <RouterLink :to="{ name: 'reservas' }" class="nav-link" active-class="active">
                         Reservas
                     </RouterLink>
-                    <RouterLink :to="{name: 'user'}" class="nav-link" active-class="active">
+                    <RouterLink :to="{ name: 'user' }" class="nav-link" active-class="active">
                         Cuenta
                     </RouterLink>
                 </div>
@@ -44,13 +44,20 @@ const authStore = useAuthStore()
 img {
     height: 100px;
 }
-.nav-link{
+
+.nav-link {
     font-size: 1.4em;
     margin-left: 10px;
     margin-right: 10px;
 }
-.nav-link:hover{
+
+.nav-link:hover {
     color: #1a81be;
     text-decoration: underline;
+}
+
+.navbar-nav .nav-link.active,
+.navbar-nav .nav-link.show {
+    font-weight: 600;
 }
 </style>

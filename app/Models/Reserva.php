@@ -9,19 +9,20 @@ class Reserva extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['titulo', 'descripcion', 'fecha_reserva', 'user_id', 'aula_id'];
+    protected $fillable = ['titulo', 'descripcion', 'fecha', 'hora_inicio', 'hora_fin', 'user_id', 'aula_id'];
 
-    public function reservasUsuarios(){
+    public function reservasUsuarios()
+    {
         return $this->hasMany(ReservasUsuario::class);
     }
 
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function aula(){
+    public function aula()
+    {
         return $this->belongsTo(Aula::class);
     }
-
-
 }
