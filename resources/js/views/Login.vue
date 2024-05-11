@@ -1,12 +1,27 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch, defineAsyncComponent, onUnmounted } from 'vue';
 import useAuthStore from '../stores/authStore';
 
 const authStore = new useAuthStore();
 
+const Loading = defineAsyncComponent(() => import('../components/LoadingContent.vue'))
+
 const form = ref({
     email: '',
     password: '',
+})
+
+const loading = ref(false)
+
+watch(() => authStore.status, (newValue) => {
+    console.log('miau');
+    if (newValue == 'authenticating') {
+        loading.value = true
+    }
+})
+
+onUnmounted(()=> {
+    loading.value = false
 })
 
 </script>
@@ -15,7 +30,8 @@ const form = ref({
         <div class="d-flex flex-column align-items-center justify-content-center px-2 py-3 vh-100">
             <div>
                 <router-link :to="{ name: 'home' }">
-                    <img style="height: 220px; margin-left: 35px;" src="../assets/img/ETSI SIST_INFORM_COLOR.png" alt="logo">
+                    <img style="height: 220px; margin-left: 35px;" src="../assets/img/ETSI SIST_INFORM_COLOR.png"
+                        alt="logo">
                 </router-link>
             </div>
             <div class="bg-white rounded shadow w-100 p-0" style="max-width: 32rem;">
@@ -39,6 +55,7 @@ const form = ref({
                                 incorrectos</span>
                         </div>
                         <button type="submit" class="btn btn-primary w-100">Sign in</button>
+                        <Loading v-if="loading" />
                     </form>
                 </div>
             </div>

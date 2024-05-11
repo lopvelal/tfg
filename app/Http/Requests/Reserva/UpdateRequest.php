@@ -25,11 +25,11 @@ class UpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'titulo' => 'required|min:4',
-            'fecha' => 'required|date|after:yesterday',
-            'hora_inicio' => 'required|date_format:H:i',
-            'hora_fin' => 'required|date_format:H:i',
-            'descripcion' => 'nullable|min:4',
+            'titulo' => 'required|string|max:255',
+            'descripcion' => 'nullable|string',
+            'fecha' => 'required|date|after_or_equal:today',
+            'hora_inicio' => 'required|date_format:H:i:s',
+            'duracion' => 'required|integer|min:1',
         ];
     }
 

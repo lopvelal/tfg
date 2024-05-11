@@ -36,21 +36,18 @@ class ReservaController extends Controller
     }
 
 
-    public function obtenerEspaciosDisponibles(Request $request)
+    public function obtenerEspaciosDisponibles($fecha, $aula_id)
     {
-        $fecha = $request->input('fecha'); // Asegúrate de que esta fecha viene en formato 'Y-m-d'
-        $horariosOcupados = Reserva::whereDate('fecha', $fecha)
-            ->get(['hora_inicio', 'duracion']);
+        $horariosOcupados = Reserva::whereDate('fecha', $fecha)->where('aula_id', $aula_id)->get(['hora_inicio', 'duracion']);
 
         $espaciosDisponibles = $this->calcularEspaciosDisponibles($fecha, $horariosOcupados);
 
-        return response()->json($espaciosDisponibles);
+        return $espaciosDisponibles;
     }
 
     protected function calcularEspaciosDisponibles($fecha, $horariosOcupados)
     {
         $inicioDelDia = Carbon::createFromFormat('Y-m-d H:i:s', $fecha . ' 08:00:00');
-        $finDelDia = Carbon::createFromFormat('Y-m-d H:i:s', $fecha . ' 21:00:00');
 
         // Define los bloques horarios de una hora desde las 08:00 hasta las 21:00
         $horarios = collect();
@@ -116,7 +113,8 @@ class ReservaController extends Controller
     public function update(UpdateRequest $request, Reserva $reserva)
     {
         $data = $request->validated();
-        return \response()->json($data);
+        $reserva->update($data);
+        return $reserva;
     }
 
     /**
@@ -124,6 +122,7 @@ class ReservaController extends Controller
      */
     public function destroy(Reserva $reserva)
     {
-        //
+        $reserva->delete();
+        return \response()->json(['mensaje' => 'Se ha borrado correctamente']);
     }
 }

@@ -54,7 +54,6 @@ const useAuthStore = defineStore('auth', () => {
     }
 
     const handleLogin = async (data) => {
-        console.log('Haciendo el login')
         status.value = 'authenticating'
         getToken()
         try {
