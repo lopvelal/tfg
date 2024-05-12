@@ -31,7 +31,7 @@ const useAuthStore = defineStore('auth', () => {
     }
 
     const getUser = async () => {
-        getToken()
+        await getToken()
         try {
             const dataUser = await axios.get('/api/user')
             const dataPermisos = await axios.get('/api/user/permissions')
@@ -55,7 +55,8 @@ const useAuthStore = defineStore('auth', () => {
 
     const handleLogin = async (data) => {
         status.value = 'authenticating'
-        getToken()
+        errores.value = null
+        await getToken()
         try {
             await axios.post('/login', {
                 email: data.email,

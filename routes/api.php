@@ -24,6 +24,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         return $request->user();
     });
 
+    Route::get('/aulas/disponibles', [AulaController::class, 'getAulasDisponibles']);
     Route::resource('/aulas', AulaController::class)->except(['create']);
 
     Route::get('/obtenerespaciosdisponibles/{fecha}/{aula_id}', [ReservaController::class, 'obtenerEspaciosDisponibles']);

@@ -48,7 +48,7 @@
                                             <td>{{ reserva.fecha_reserva }}</td>
                                             <td>{{ reserva.plazas_ocupadas }} / {{ aula.plazas }}</td>
                                             <td>
-                                                <RouterLink :to="{ name: 'reserva.info', params: { id: reserva.id } }">+ Mas info</RouterLink>
+                                                <RouterLink :to="{ name: 'actividad.info', params: { id: reserva.id } }" class="fw-bold">+ Mas info</RouterLink>
                                             </td>
                                         </tr>
                                     </tbody>

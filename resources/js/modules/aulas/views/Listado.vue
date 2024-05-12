@@ -2,31 +2,33 @@
     <div class="container mt-5">
         <h1 class="text-center mb-4">Listado de aulas</h1>
         <template v-if="aulas">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Nombre</th>
-                        <th scope="col">Plazas</th>
-                        <th scope="col">Disponible</th>
-                        <th scope="col">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="aula in aulas" :key="aula.id">
-                        <td class="fw-bold" scope="row">{{ aula.id }}</td>
-                        <td>{{ aula.nombre }}</td>
-                        <td>{{ aula.plazas }}</td>
-                        <td><i class="fa-lg"
-                                :class="{ 'fa-solid fa-circle-check': aula.disponible, 'fa-solid fa-circle-xmark': !aula.disponible }"
-                                :style="aula.disponible ? 'color: #189A3F' : 'color: #BE1313'"></i></td>
-                        <td>
-                            <RouterLink :to="{ name: 'aula.info', params: { id: aula.id } }">+ Mas info</RouterLink>
-                        </td>
-                    </tr>
-                </tbody>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Plazas</th>
+                            <th scope="col">Disponible</th>
+                            <th scope="col">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="aula in aulas" :key="aula.id">
+                            <td class="fw-bold" scope="row">{{ aula.id }}</td>
+                            <td>{{ aula.nombre }}</td>
+                            <td>{{ aula.plazas }}</td>
+                            <td><i class="fa-lg"
+                                    :class="{ 'fa-solid fa-circle-check': aula.disponible, 'fa-solid fa-circle-xmark': !aula.disponible }"
+                                    :style="aula.disponible ? 'color: #189A3F' : 'color: #BE1313'"></i></td>
+                            <td>
+                                <RouterLink :to="{ name: 'aula.info', params: { id: aula.id } }" class="fw-bold">+ Mas info</RouterLink>
+                            </td>
+                        </tr>
+                    </tbody>
 
-            </table>
+                </table>
+            </div>
             <div class="mt-4 mb-4 d-flex flex-column align-items-center">
                 <!-- Help text -->
                 <span class="text-sm text-gray-700">
@@ -46,7 +48,7 @@
             </div>
         </template>
         <template v-else>
-            <LoadingContent/>
+            <LoadingContent />
         </template>
     </div>
 </template>

@@ -14,7 +14,6 @@ const form = ref({
 const loading = ref(false)
 
 watch(() => authStore.status, (newValue) => {
-    console.log('miau');
     if (newValue == 'authenticating') {
         loading.value = true
     }
@@ -55,7 +54,7 @@ onUnmounted(()=> {
                                 incorrectos</span>
                         </div>
                         <button type="submit" class="btn btn-primary w-100">Sign in</button>
-                        <Loading v-if="loading" />
+                        <Loading v-if="loading && !authStore.errores" />
                     </form>
                 </div>
             </div>

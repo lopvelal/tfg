@@ -16,6 +16,11 @@ class AulaController extends Controller
         return Aula::paginate(5);
     }
 
+    public function getAulasDisponibles()
+    {
+        return Aula::all()->where('disponible', '=', 1);
+    }
+
     /**
      * Store a newly created resource in storage.
      */

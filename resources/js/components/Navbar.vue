@@ -16,8 +16,8 @@
                     <RouterLink :to="{ name: 'aulas' }" class="nav-link" active-class="active">
                         Aulas
                     </RouterLink>
-                    <RouterLink :to="{ name: 'reservas' }" class="nav-link" active-class="active">
-                        Reservas
+                    <RouterLink :to="{ name: 'actividades' }" class="nav-link" active-class="active">
+                        Actividades
                     </RouterLink>
                     <RouterLink :to="{ name: 'user' }" class="nav-link" active-class="active">
                         Cuenta

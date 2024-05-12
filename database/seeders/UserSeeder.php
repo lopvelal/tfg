@@ -27,5 +27,11 @@ class UserSeeder extends Seeder
             'email' => 'profesor@mail.com',
             'password' => Hash::make('UPM123'),
         ])->assignRole('profesor');
+
+        \App\Models\User::factory()->create([
+            'name' => 'alumno',
+            'email' => 'alumno@mail.com',
+            'password' => Hash::make('UPM123'),
+        ])->assignRole('alumno');
     }
 }

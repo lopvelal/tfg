@@ -22,7 +22,7 @@ const routes =[
         ...aulasRouter,
     },
     {
-        path: '/reservas',
+        path: '/actividades',
         ...reservasRouter,
     },
     {
@@ -33,6 +33,8 @@ const routes =[
     },
     {
         path: '/:catchAll(.*)*',
+        name: '404',
+        beforeEnter: [isAuthenticatedGuard],
         component: () => import('../views/404.vue')
     },
 ]

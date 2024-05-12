@@ -1,30 +1,39 @@
 <template>
     <div class="container mt-5">
-        <h1 class="text-center mb-4">Listado de reservas</h1>
+        <h1 class="text-center mb-4">Listado de actividades</h1>
+        <RouterLink v-if="autorizado" :to="{ name: 'actividad.nueva' }" class="btn btn-success mb-3"><i class="fa fa-bookmark me-2"></i>Nueva Actividad</RouterLink>
         <template v-if="reservas">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Titulo</th>
-                        <th scope="col">Fecha Reserva</th>
-                        <th scope="col">Plazas</th>
-                        <th scope="col">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="reserva in reservas" :key="reserva.id">
-                        <td class="fw-bold" scope="row">{{ reserva.id }}</td>
-                        <td>{{ reserva.titulo }}</td>
-                        <td>{{ reserva.fecha_reserva }}</td>
-                        <td></td>
-                        <td>
-                            <RouterLink :to="{ name: 'reserva.info', params: { id: reserva.id } }">+ Mas info</RouterLink>
-                        </td>
-                    </tr>
-                </tbody>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Titulo</th>
+                            <th scope="col">Fecha Actividad</th>
+                            <th scope="col">Aula</th>
+                            <th scope="col">Plazas</th>
+                            <th scope="col">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="reserva in reservas" :key="reserva.id">
+                            <td class="fw-bold" scope="row">{{ reserva.id }}</td>
+                            <td>{{ reserva.titulo }}</td>
+                            <td>{{ reserva.fecha }}</td>
+                            <td>{{ reserva.aula.nombre }} ({{ reserva.aula.id }})</td>
+                            <td>{{ reserva.plazas_ocupadas ?? 0 }} / {{ reserva.aula.plazas }}</td>
+                            <td>
+                                <RouterLink :to="{ name: 'actividad.info', params: { id: reserva.id } }"
+                                    class="fw-bold">
+                                    + Mas info
+                                </RouterLink>
+                            </td>
+                        </tr>
+                    </tbody>
 
-            </table>
+                </table>
+            </div>
+
             <div class="mt-4 mb-4 d-flex flex-column align-items-center">
                 <!-- Help text -->
                 <span class="text-sm text-gray-700">
@@ -43,36 +52,52 @@
                 </div>
             </div>
         </template>
+        <template v-else-if="loading">
+            <LoadingContent />
+        </template>
         <template v-else>
-            <LoadingContent/>
+            <h3 class="text-center"> No se han encontrado registros </h3>
         </template>
     </div>
 </template>
 
 <script setup>
-import { ref, defineAsyncComponent } from 'vue';
+import { ref, defineAsyncComponent, computed } from 'vue';
+import { RouterLink } from 'vue-router';
+import useAuthStore from '../../../stores/authStore';
+
+const authStore = useAuthStore()
 
 const LoadingContent = defineAsyncComponent(() => import('../../../components/LoadingContent.vue'))
 
-const reservas = ref(null); // Inicializa reservas como un array vacío
-const pagination = ref({});
+const loading = ref(true)
+const reservas = ref(null)
+const pagination = ref({})
+
+const autorizado = computed(() => {
+    return !authStore.permisos.roles.includes('alumno')
+})
+
 
 const getReservas = async (url = '/api/reservas') => {
     try {
-        const alumnos = await axios.get(url);
-        reservas.value = alumnos.data.data;
-        pagination.value = {
-            current_page: alumnos.data.current_page,
-            last_page: alumnos.data.last_page,
-            per_page: alumnos.data.per_page,
-            next_page_url: alumnos.data.next_page_url,
-            prev_page_url: alumnos.data.prev_page_url,
-            total: alumnos.data.total,
-            from: alumnos.data.from,
-            to: alumnos.data.to,
-        };
+        const { data } = await axios.get(url);
+        if (data.data.length) {
+            reservas.value = data.data;
+            pagination.value = {
+                current_page: data.current_page,
+                last_page: data.last_page,
+                per_page: data.per_page,
+                next_page_url: data.next_page_url,
+                prev_page_url: data.prev_page_url,
+                total: data.total,
+                from: data.from,
+                to: data.to,
+            };
+        }
+        loading.value = false
     } catch (error) {
-        console.error("Error al cargar los alumnos:", error);
+        console.error("Error al cargar las reservas:", error);
     }
 };
 

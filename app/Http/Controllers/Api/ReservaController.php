@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Reserva\StoreRequest;
 use App\Http\Requests\Reserva\UpdateRequest;
 use App\Models\Aula;
 use App\Models\Reserva;
@@ -16,7 +17,10 @@ class ReservaController extends Controller
      */
     public function index()
     {
-        return Reserva::withCount(['reservasUsuarios'])->paginate(5);
+        return Reserva::withCount(['reservasUsuarios as plazas_ocupadas'])
+            ->with('aula')
+            ->orderBy('fecha')
+            ->paginate(5);
     }
     /**
      * Devuelve las reservas hechas para un aula y fecha indicadas.
@@ -70,21 +74,12 @@ class ReservaController extends Controller
         return $horarios;
     }
 
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
-        //
+        return Reserva::create($request->validated());
     }
 
     /**
@@ -95,18 +90,8 @@ class ReservaController extends Controller
         $reserva = Reserva::withCount('reservasUsuarios as plazas_ocupadas')
             ->with('aula')
             ->findOrFail($reserva->id);
-
         return $reserva;
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Reserva $reserva)
-    {
-        //
-    }
-
     /**
      * Update the specified resource in storage.
      */

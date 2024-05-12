@@ -1,6 +1,6 @@
 <script setup>
 
-import { computed, defineAsyncComponent, onMounted } from 'vue'
+import { computed, defineAsyncComponent } from 'vue'
 import { useRoute } from 'vue-router';
 import useAuthStore from './stores/authStore';
 import Navbar from './components/Navbar.vue'

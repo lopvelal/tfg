@@ -58,21 +58,22 @@
                                 <p class="card-text"><strong>Descripción:</strong> {{ reserva.descripcion }}</p>
                                 <p class="card-text"><strong>Plazas:</strong> {{ reserva.plazas_ocupadas ?? 0 }} /
                                     {{ reserva.aula.plazas }}</p>
-                                <div class="d-flex justify-content-between">
+                                <div v-if="autorizado" class="d-flex justify-content-between">
                                     <button @click="modoEdicion = !modoEdicion" class="btn btn-success"><i
                                             class="fa fa-pen me-2"></i>Editar</button>
                                     <button @click="deleteReserva" class="btn btn-danger"><i
                                             class="fa fa-trash me-2"></i>Eliminar</button>
+                                </div>
+                                <div v-else class="d-flex justify-content-center">
+                                    <button @click="modoEdicion = !modoEdicion" class="btn btn-success"><i
+                                            class="fa fa-plus me-2"></i>Inscribirme</button>
                                 </div>
                             </template>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-8 col-12 mt-lg-0 mt-4">
-                    <template v-if="authStore.permisos.roles.includes('alumno')">
-                        <h3>Capado por el rol</h3>
-                    </template>
-                    <template v-else>
+                    <template v-if="!authStore.permisos.roles.includes('alumno')">
                         <div class="card">
                             <div class="card-header">
                                 Alumnos inscritos
@@ -118,14 +119,13 @@ import { ref, onUnmounted, watch, computed } from 'vue';
 import useAuthStore from '../../../stores/authStore'
 
 import LoadingContent from '../../../components/LoadingContent.vue';
-import axios from 'axios';
 import Swal from 'sweetalert2';
 import { useRouter } from 'vue-router';
 
 // props
 const props = defineProps({
     id: {
-        required: true
+        required: true,
     }
 })
 
@@ -158,7 +158,11 @@ const posibilidadDosHoras = computed(() => {
     }
 })
 
-// funciones
+const autorizado = computed(() => {
+    return !authStore.permisos.roles.includes('alumno')
+})
+
+/* funciones */
 
 // obtener los datos de la reserva
 const getInfoReserva = async () => {
@@ -192,15 +196,22 @@ const getUsuariosReserva = async () => {
 }
 
 // obtener los horarios disponibles para una fecha
-const getHorariosDisponiblesFecha = async (fecha) => {
+const getHorariosDisponiblesFecha = async () => {
     try {
-        console.log(fecha);
+        let fecha = form.value.fecha
         loadingHorarios.value = true
-        const { data } = await axios.get(`/api/obtenerespaciosdisponibles/${fecha}/${form.value.aula_id}`)
-        console.log(data);
+        const { data } = await axios.get(`/api/obtenerespaciosdisponibles/${form.value.fecha}/${form.value.aula_id}`)
         horasDisponibles.value = Object.values(data)
         if (fecha == fechaReserva.value) {
             horasDisponibles.value.push(form.value.hora_inicio)
+
+            if (form.value.duracion == 2) {
+                let horaString = form.value.hora_inicio
+                let fecha = new Date(`1970-01-01T${horaString}Z`)
+                fecha.setHours(fecha.getHours() + 1)
+                let horaSiguiente = fecha.toISOString().split('T')[1].substring(0, 8)
+                horasDisponibles.value.push(horaSiguiente)
+            }
         }
         horasDisponibles.value.sort()
         loadingHorarios.value = false
@@ -306,10 +317,15 @@ const deleteReserva = async () => {
 
 
 // watch
-watch(() => form.value.fecha, async (newValue) => {
-    await getHorariosDisponiblesFecha(newValue)
+watch(() => form.value.fecha, async () => {
+    await getHorariosDisponiblesFecha()
 })
 
+watch(modoEdicion, async(newValue) => {
+    if(newValue){
+        await getHorariosDisponiblesFecha()
+    }
+})
 
 // ejecución de funciones
 getUsuariosReserva()

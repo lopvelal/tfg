@@ -4,7 +4,8 @@ import useAuthStore from "../stores/authStore"
 const isAuthenticatedGuard = async(to, from, next) => {
 
     const authStore = useAuthStore()
-    if (authStore.checkAuthentication().ok) {
+    const authResult = authStore.checkAuthentication()
+    if (authResult.ok) {
         if (!authStore.user) {
             await authStore.getUser()
         }
