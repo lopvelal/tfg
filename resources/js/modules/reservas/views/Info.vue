@@ -202,7 +202,6 @@ const getInfoReserva = async () => {
 const getInscrito = async () => {
     if (!autorizado.value) { //es alumno
         const { data } = await axios.get(`/api/reservas-usuarios/alumno-inscrito/${reserva.value.id}`)
-        console.log(data)
         if (data.status == 'ok') {
             inscrito.value = true
         } else {
@@ -348,12 +347,10 @@ const deleteReserva = async () => {
 // alta de un alumno en la reserva
 const altaAlumno = async () => {
     try {
-        console.log(authStore.user.id);
         const { data } = await axios.post('/api/reservas-usuarios', {
             usuario: authStore.user.id,
             reserva: reserva.value.id
         })
-        console.log(data);
         if (data.status === 'ok') {
             Swal.fire({
                 position: "top-end",
@@ -381,9 +378,7 @@ const altaAlumno = async () => {
 // baja de un alumno en la reserva
 const bajaAlumno = async () => {
     try {
-        console.log(authStore.user.id);
         const { data } = await axios.delete(`/api/reservas-usuarios/baja/${reserva.value.id}`)
-        console.log(data);
         if (data.status === 'ok') {
             Swal.fire({
                 position: "top-end",

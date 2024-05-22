@@ -25,9 +25,13 @@
                             Reservas del aula
                         </div>
                         <div class="card-body">
-                            <div class="d-flex justify-content-between">
-                                <h5 class="card-title">{{ aula.nombre }}</h5>
-                                <input type="date" name="date" id="date" v-model="fecha">
+                            <div class="row justify-content-between">
+                                <div class="col-8">
+                                    <h5 class="card-title">{{ aula.nombre }}</h5>
+                                </div>
+                                <div class="col-4">
+                                    <input type="date" class="form-control" name="date" id="date" v-model="fecha">
+                                </div>
                             </div>
                             <p class="fw-bold" v-if="!reservas.length">{{ reservas.lenght }} No hay reservas</p>
                             <template v-else>

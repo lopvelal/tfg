@@ -91,15 +91,12 @@ const getHorariosDisponiblesFecha = async () => {
         try {
             loadingHorarios.value = true
             const { data } = await axios.get(`/api/obtener-espacios-disponibles/${form.value.fecha}/${form.value.aula_id}`)
-            console.log(data);
             horasDisponibles.value = Object.values(data)
             horasDisponibles.value.sort()
             loadingHorarios.value = false
         } catch (error) {
             console.error(error);
         }
-    } else {
-        console.log('Falta uno de los datos');
     }
 
 }
@@ -108,7 +105,6 @@ const getAulas = async () => {
     try {
         const { data } = await axios.get('/api/aulas/disponibles')
         aulas.value = data
-        console.log(data);
     } catch (error) {
         console.log(error);
     }
@@ -117,7 +113,6 @@ const getAulas = async () => {
 const storeElement = async () => {
     try {
         const { data } = await axios.post('/api/reservas', form.value)
-        console.log(data);
         router.push({ name: 'actividad.info', params: { id: data.id } }).then(() => {
             Swal.fire({
                 position: "top-end",
