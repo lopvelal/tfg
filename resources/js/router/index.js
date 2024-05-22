@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import userRouter from '../modules/user/router'
 import aulasRouter from '../modules/aulas/router'
 import reservasRouter from '../modules/reservas/router'
+import homeRouter from '../modules/home/router'
 
 import isAuthenticatedGuard from "./isAuthenticathedGuard";
 import isNoAuthenticatedGuard from "./isNoAuthenticathedGuard";
@@ -9,9 +10,7 @@ import isNoAuthenticatedGuard from "./isNoAuthenticathedGuard";
 const routes =[
     {
         path: '/',
-        name: 'home',
-        beforeEnter: [isAuthenticatedGuard],
-        component: () => import('../views/Home.vue')
+        ...homeRouter,
     },
     {
         path: '/user',

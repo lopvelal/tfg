@@ -17,6 +17,8 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('reserva_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
+
+            $table->unique(['user_id', 'reserva_id'], 'reservas_usuarios_unique');
         });
     }
 

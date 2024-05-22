@@ -27,12 +27,16 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/aulas/disponibles', [AulaController::class, 'getAulasDisponibles']);
     Route::resource('/aulas', AulaController::class)->except(['create']);
 
-    Route::get('/obtenerespaciosdisponibles/{fecha}/{aula_id}', [ReservaController::class, 'obtenerEspaciosDisponibles']);
+    Route::get('/obtener-espacios-disponibles/{fecha}/{aula_id}', [ReservaController::class, 'obtenerEspaciosDisponibles']);
     Route::get('/reservas/usuarios/{idReserva}', [ReservaController::class, 'getUsuariosReserva']);
     Route::get('/reservas/{idAula}/{fecha}', [ReservaController::class, 'getReservasAulaFecha']);
+    Route::get('/reservas/profesor', [ReservaController::class, 'getReservasProfesor']);
+    Route::get('/reservas/alumno', [ReservaController::class, 'getReservasAlumno']);
     Route::resource('/reservas', ReservaController::class)->except(['create']);
 
 
+    Route::get('/reservas-usuarios/alumno-inscrito/{reserva_id}', [ReservaUsuariosController::class, 'alumnoInscrito']);
+    Route::delete('/reservas-usuarios/baja/{reserva_id}', [ReservaUsuariosController::class, 'desinscribirAlumno']);
     Route::resource('/reservas-usuarios', ReservaUsuariosController::class)->except(['create']);
 
     Route::get('/user/permissions', [PermissionController::class, 'getUserPermissions']);

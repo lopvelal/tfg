@@ -36,7 +36,8 @@
                                         <tr>
                                             <th scope="col">#</th>
                                             <th scope="col">Título</th>
-                                            <th scope="col">Fecha Reserva</th>
+                                            <th scope="col">Hora</th>
+                                            <th scope="col">Duración</th>
                                             <th scope="col">Plazas Ocupadas</th>
                                             <th scope="col">Acciones</th>
                                         </tr>
@@ -45,7 +46,8 @@
                                         <tr v-for="reserva in reservas" :key="reserva.id">
                                             <td class="fw-bold" scope="row">{{ reserva.id }}</td>
                                             <td>{{ reserva.titulo }}</td>
-                                            <td>{{ reserva.fecha_reserva }}</td>
+                                            <td>{{ reserva.hora_inicio }}</td>
+                                            <td>{{ reserva.duracion }}</td>
                                             <td>{{ reserva.plazas_ocupadas }} / {{ aula.plazas }}</td>
                                             <td>
                                                 <RouterLink :to="{ name: 'actividad.info', params: { id: reserva.id } }" class="fw-bold">+ Mas info</RouterLink>

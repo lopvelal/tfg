@@ -7,20 +7,49 @@ use App\Http\Requests\Reserva\StoreRequest;
 use App\Http\Requests\Reserva\UpdateRequest;
 use App\Models\Aula;
 use App\Models\Reserva;
+use App\Models\ReservasUsuario;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ReservaController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return Reserva::withCount(['reservasUsuarios as plazas_ocupadas'])
+        // Validación de entrada
+        $validated = $request->validate([
+            'search' => 'nullable|string|max:255',
+            'page' => 'nullable|integer',
+            'per_page' => 'nullable|integer'
+        ]);
+
+        // Construir la consulta
+        $query = Reserva::withCount(['reservasUsuarios as plazas_ocupadas'])
             ->with('aula')
-            ->orderBy('fecha')
-            ->paginate(5);
+            ->orderBy('fecha');
+
+        // Filtrado basado en la búsqueda
+        if (!empty($validated['search'])) {
+            $search = $validated['search'];
+            $query->where(function ($q) use ($search) {
+                $q->where('titulo', 'like', "%{$search}%")
+                    ->orWhere('fecha', 'like', "%{$search}%")
+                    ->orWhereHas('aula', function($q) use ($search) {
+                        $q->where('nombre', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        // Ejecutar la consulta con paginación
+        $perPage = $validated['per_page'] ?? 5;
+        $reservas = $query->paginate($perPage);
+
+        // Devolver la respuesta en formato JSON
+        return response()->json($reservas);
     }
     /**
      * Devuelve las reservas hechas para un aula y fecha indicadas.
@@ -29,6 +58,34 @@ class ReservaController extends Controller
     {
         $reservas = Aula::find($idAula)->reservas()->withCount('reservasUsuarios as plazas_ocupadas')->whereDate('fecha', '=', $fechaReserva)->get();
         return $reservas;
+    }
+    /**
+     * Devuelve las reservas de un profesor
+     */
+    public function getReservasProfesor()
+    {
+        return Reserva::withCount(['reservasUsuarios as plazas_ocupadas'])
+            ->with('aula')
+            ->where('user_id', Auth::id())
+            ->whereDate('fecha', '>=', date('Y-m-d'))
+            ->orderBy('fecha')
+            ->paginate(5);
+    }
+    /**
+     * Devuelve las reservas a las que está dado de alta un alumno
+     */
+    public function getReservasAlumno()
+    {
+        $user_id = Auth::id();
+
+        $reservas_usuarios = ReservasUsuario::where('user_id', $user_id)->pluck('reserva_id');
+
+        return Reserva::withCount(['reservasUsuarios as plazas_ocupadas'])
+            ->with('aula')
+            ->whereIn('id', $reservas_usuarios)
+            ->whereDate('fecha', '>=', date('Y-m-d'))
+            ->orderBy('fecha')
+            ->paginate(5);
     }
 
     /**
@@ -79,6 +136,14 @@ class ReservaController extends Controller
      */
     public function store(StoreRequest $request)
     {
+        //Comprobar si el aula está ocupada
+        $reservas = Reserva::where('aula_id', $request->aula_id)
+            ->where('fecha', $request->fecha)
+            ->where('hora_inicio', $request->hora_inicio)
+            ->get();
+        if ($reservas->count() > 0) {
+            return response()->json(['status' => 'ko', 'mensaje' => 'El aula ya está reservada en esa fecha y hora'], 409);
+        }
         return Reserva::create($request->validated());
     }
 

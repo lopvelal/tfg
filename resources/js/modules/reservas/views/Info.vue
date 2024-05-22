@@ -1,7 +1,7 @@
 <template>
     <div class="container mt-3">
         <h1 class="text-center">Información de la actividad</h1>
-        <template v-if="reserva">
+        <template v-if="!loading">
             <div class="row mt-3">
                 <div class="col-lg-4 col-12">
                     <div class="card">
@@ -51,7 +51,8 @@
                             </template>
                             <template v-else>
                                 <h5 class="card-title">{{ reserva.titulo }}</h5>
-                                <p class="mt-4 card-text"><strong>Aula: </strong>{{ reserva.aula.nombre }}</p>
+                                <p class="mt-4 card-text"><strong>Aula: </strong>{{ reserva.aula.nombre }} ({{
+            reserva.aula.alias }})</p>
                                 <p class="card-text"><strong>Fecha: </strong>{{ reserva.fecha }}</p>
                                 <p class="card-text"><strong>Hora Inicio: </strong>{{ reserva.hora_inicio }}</p>
                                 <p class="card-text"><strong>Duración: </strong>{{ reserva.duracion }}</p>
@@ -65,8 +66,10 @@
                                             class="fa fa-trash me-2"></i>Eliminar</button>
                                 </div>
                                 <div v-else class="d-flex justify-content-center">
-                                    <button @click="modoEdicion = !modoEdicion" class="btn btn-success"><i
-                                            class="fa fa-plus me-2"></i>Inscribirme</button>
+                                    <button v-if="inscrito" @click="bajaAlumno" class="btn btn-danger"><i
+                                            class="fa fa-user-minus me-2"></i>Desinscribirme</button>
+                                    <button v-else @click="altaAlumno" :disabled="!plazaDisponible" class="btn btn-success"><i
+                                        class="fa fa-user-plus me-2"></i>Inscribirme</button>
                                 </div>
                             </template>
                         </div>
@@ -135,12 +138,16 @@ const reserva = ref(null)
 const reservas_usuarios = ref(null)
 const modoEdicion = ref(false)
 const horasDisponibles = ref(null)
+const loading = ref(true)
 const loadingHorarios = ref(false)
 const form = ref({})
 const fechaReserva = ref(null)
+const inscrito = ref(null)
 const router = useRouter()
 
 // computed
+
+// comprobar si se puede seleccionar 2 horas
 const posibilidadDosHoras = computed(() => {
     if (form.value.hora_inicio && horasDisponibles) {
         let i = horasDisponibles.value.indexOf(form.value.hora_inicio)
@@ -158,8 +165,14 @@ const posibilidadDosHoras = computed(() => {
     }
 })
 
+// comprobar si el usuario está autorizado
 const autorizado = computed(() => {
     return !authStore.permisos.roles.includes('alumno')
+})
+
+// comprobar si hay plazas disponibles
+const plazaDisponible = computed(() => {
+    return reserva.value.plazas_ocupadas < reserva.value.aula.plazas
 })
 
 /* funciones */
@@ -167,9 +180,9 @@ const autorizado = computed(() => {
 // obtener los datos de la reserva
 const getInfoReserva = async () => {
     try {
+        const { data } = await axios.get(`/api/reservas/${props.id}`)
+        reserva.value = data
         if (!modoEdicion.value) {
-            const { data } = await axios.get(`/api/reservas/${props.id}`)
-            reserva.value = data
             form.value.titulo = data.titulo
             form.value.fecha = data.fecha
             form.value.aula_id = data.aula_id
@@ -177,10 +190,24 @@ const getInfoReserva = async () => {
             form.value.hora_inicio = data.hora_inicio
             form.value.duracion = data.duracion
             form.value.descripcion = data.descripcion
-
         }
+        await getInscrito()
+        loading.value = false
     } catch (error) {
         console.error(error);
+    }
+}
+
+// comprobar si el usuario está inscrito
+const getInscrito = async () => {
+    if (!autorizado.value) { //es alumno
+        const { data } = await axios.get(`/api/reservas-usuarios/alumno-inscrito/${reserva.value.id}`)
+        console.log(data)
+        if (data.status == 'ok') {
+            inscrito.value = true
+        } else {
+            inscrito.value = false
+        }
     }
 }
 
@@ -200,11 +227,10 @@ const getHorariosDisponiblesFecha = async () => {
     try {
         let fecha = form.value.fecha
         loadingHorarios.value = true
-        const { data } = await axios.get(`/api/obtenerespaciosdisponibles/${form.value.fecha}/${form.value.aula_id}`)
+        const { data } = await axios.get(`/api/obtener-espacios-disponibles/${form.value.fecha}/${form.value.aula_id}`)
         horasDisponibles.value = Object.values(data)
         if (fecha == fechaReserva.value) {
             horasDisponibles.value.push(form.value.hora_inicio)
-
             if (form.value.duracion == 2) {
                 let horaString = form.value.hora_inicio
                 let fecha = new Date(`1970-01-01T${horaString}Z`)
@@ -262,7 +288,7 @@ const eliminarUsuarioReserva = async (id) => {
 
 const updateInfo = async () => {
     try {
-        const { data } = await axios.put(`/api/reservas/${props.id}`, form.value)
+        await axios.put(`/api/reservas/${props.id}`, form.value)
         modoEdicion.value = false
         await getInfoReserva()
         Swal.fire({
@@ -283,7 +309,7 @@ const updateInfo = async () => {
 
 const deleteReserva = async () => {
     Swal.fire({
-        title: "¿Estás seguro?",
+        title: "¿Quiere dar de baja al alumno?",
         text: "Esta acción no se puede revertir",
         icon: "warning",
         showCancelButton: true,
@@ -316,24 +342,100 @@ const deleteReserva = async () => {
 }
 
 
+
+/* Operaciones asociadas a los alumnos */
+
+// alta de un alumno en la reserva
+const altaAlumno = async () => {
+    try {
+        console.log(authStore.user.id);
+        const { data } = await axios.post('/api/reservas-usuarios', {
+            usuario: authStore.user.id,
+            reserva: reserva.value.id
+        })
+        console.log(data);
+        if (data.status === 'ok') {
+            Swal.fire({
+                position: "top-end",
+                icon: "success",
+                title: "Te has inscrito correctamente",
+                showConfirmButton: false,
+                timer: 2500
+            });
+        } else {
+            Swal.fire({
+                position: "top",
+                icon: "warning",
+                title: data.mensaje,
+                showConfirmButton: false,
+                timer: 2500
+            });
+        }
+        await getInfoReserva()
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+// baja de un alumno en la reserva
+const bajaAlumno = async () => {
+    try {
+        console.log(authStore.user.id);
+        const { data } = await axios.delete(`/api/reservas-usuarios/baja/${reserva.value.id}`)
+        console.log(data);
+        if (data.status === 'ok') {
+            Swal.fire({
+                position: "top-end",
+                icon: "success",
+                title: "Te has dado de baja correctamente",
+                showConfirmButton: false,
+                timer: 2500
+            });
+        } else {
+            Swal.fire({
+                position: "top",
+                icon: "warning",
+                title: "Ha ocurrido un error, inténtalo de nuevo",
+                showConfirmButton: false,
+                timer: 2500
+            });
+        }
+        await getInfoReserva()
+    } catch (error) {
+        console.log(error);
+    }
+}
+/* Fin Operaciones asociadas a los alumnos */
+
+
 // watch
+
+// obtener los horarios disponibles al cambiar la fecha
 watch(() => form.value.fecha, async () => {
     await getHorariosDisponiblesFecha()
 })
 
-watch(modoEdicion, async(newValue) => {
-    if(newValue){
+// obtener los horarios disponibles al cambiar el aula
+watch(modoEdicion, async (newValue) => {
+    if (newValue) {
         await getHorariosDisponiblesFecha()
     }
 })
 
 // ejecución de funciones
-getUsuariosReserva()
+
+if (autorizado.value) {
+    getUsuariosReserva()
+}
+
 getInfoReserva()
 
-
+// intervalo para refrescar la información
 let interval = setInterval(async () => {
-    await getUsuariosReserva()
+    if (autorizado.value) {
+        getUsuariosReserva()
+    }
     await getInfoReserva()
 }, 6000)
 

@@ -90,7 +90,7 @@ const getHorariosDisponiblesFecha = async () => {
     if (form.value.fecha && form.value.aula_id) {
         try {
             loadingHorarios.value = true
-            const { data } = await axios.get(`/api/obtenerespaciosdisponibles/${form.value.fecha}/${form.value.aula_id}`)
+            const { data } = await axios.get(`/api/obtener-espacios-disponibles/${form.value.fecha}/${form.value.aula_id}`)
             console.log(data);
             horasDisponibles.value = Object.values(data)
             horasDisponibles.value.sort()
@@ -130,7 +130,7 @@ const storeElement = async () => {
     } catch (error) {
         Swal.fire({
             title: "Actividad nueva",
-            text: "Se ha producido un error. Inténtalo de nuevo",
+            text: error.response.data.mensaje || "Ha ocurrido un error al intentar añadir la actividad",
             icon: "error"
         });
     }
