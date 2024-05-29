@@ -122,7 +122,6 @@ export default function gestionReserva(id) {
                 icon: "success"
             });
         } catch (error) {
-            console.log(error);
             Swal.fire({
                 title: "Actualización",
                 text: "Se ha producido un error. Inténtalo de nuevo",
@@ -147,7 +146,7 @@ export default function gestionReserva(id) {
             if (result.isConfirmed) {
                 try {
                     const { data } = await axios.delete(`/api/reservas/${id}`)
-                    router.push({ name: 'reservas' }).then(() => {
+                    router.push({ name: 'actividades' }).then(() => {
                         Swal.fire({
                             position: "top-end",
                             icon: "success",

@@ -69,7 +69,7 @@ const useAuthStore = defineStore('auth', () => {
             if (error.response.status === 422) {
                 errores.value = error.response.data.errors;
             } else {
-                console.log(error);
+                console.error(error);
             }
         }
     }

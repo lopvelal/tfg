@@ -24,13 +24,19 @@ class ReservaController extends Controller
         $validated = $request->validate([
             'search' => 'nullable|string|max:255',
             'page' => 'nullable|integer',
-            'per_page' => 'nullable|integer'
+            'per_page' => 'nullable|integer',
+            'sort_by' => 'nullable|string|in:titulo,fecha,aula_id', // Añadir campos por los que se puede ordenar
+            'order' => 'nullable|string|in:asc,desc' // Orden ascendente o descendente
         ]);
 
         // Construir la consulta
         $query = Reserva::withCount(['reservasUsuarios as plazas_ocupadas'])
-            ->with('aula')
-            ->orderBy('fecha');
+            ->with('aula');
+
+        // Aplicar ordenación
+        $sortBy = $validated['sort_by'] ?? 'fecha'; // Ordenar por 'fecha' por defecto
+        $order = $validated['order'] ?? 'asc'; // Orden ascendente por defecto
+        $query->orderBy($sortBy, $order);
 
         // Filtrado basado en la búsqueda
         if (!empty($validated['search'])) {
@@ -38,8 +44,9 @@ class ReservaController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('titulo', 'like', "%{$search}%")
                     ->orWhere('fecha', 'like', "%{$search}%")
-                    ->orWhereHas('aula', function($q) use ($search) {
+                    ->orWhereHas('aula', function ($q) use ($search) {
                         $q->where('nombre', 'like', "%{$search}%");
+                        $q->orWhere('alias', 'like', "%{$search}%");
                     });
             });
         }
@@ -173,6 +180,6 @@ class ReservaController extends Controller
     public function destroy(Reserva $reserva)
     {
         $reserva->delete();
-        return \response()->json(['mensaje' => 'Se ha borrado correctamente']);
+        return \response()->json(['status' => 'ok', 'mensaje' => 'Se ha borrado correctamente']);
     }
 }

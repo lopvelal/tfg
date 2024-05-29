@@ -15,7 +15,7 @@
             <div class="mb-3">
                 <label for="aula" class="form-label fw-bold">Aula</label>
                 <select v-model="form.aula_id" id="aula" class="form-select">
-                    <option v-for="aula in aulas" :value="aula.id">{{ aula.nombre }}</option>
+                    <option v-for="aula in aulas" :value="aula.id">{{ aula.nombre }} ({{ aula.alias }})</option>
                 </select>
             </div>
             <div class="mb-3">
@@ -106,7 +106,7 @@ const getAulas = async () => {
         const { data } = await axios.get('/api/aulas/disponibles')
         aulas.value = data
     } catch (error) {
-        console.log(error);
+        console.error(error);
     }
 }
 

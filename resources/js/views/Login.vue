@@ -1,29 +1,3 @@
-<script setup>
-import { onMounted, ref, watch, defineAsyncComponent, onUnmounted } from 'vue';
-import useAuthStore from '../stores/authStore';
-
-const authStore = new useAuthStore();
-
-const Loading = defineAsyncComponent(() => import('../components/LoadingContent.vue'))
-
-const form = ref({
-    email: '',
-    password: '',
-})
-
-const loading = ref(false)
-
-watch(() => authStore.status, (newValue) => {
-    if (newValue == 'authenticating') {
-        loading.value = true
-    }
-})
-
-onUnmounted(()=> {
-    loading.value = false
-})
-
-</script>
 <template>
     <section class="bg-light">
         <div class="d-flex flex-column align-items-center justify-content-center px-2 py-3 vh-100">
@@ -36,7 +10,7 @@ onUnmounted(()=> {
             <div class="bg-white rounded shadow w-100 p-0" style="max-width: 32rem;">
                 <div class="p-3">
                     <h1 class="fs-2 fw-bold">
-                        Entra en la aplicación
+                        Acceso a la plataforma
                     </h1>
                     <form @submit.prevent="authStore.handleLogin(form)" class="my-4">
                         <div class="mb-3">
@@ -62,3 +36,30 @@ onUnmounted(()=> {
     </section>
 
 </template>
+
+<script setup>
+import { onMounted, ref, watch, defineAsyncComponent, onUnmounted } from 'vue';
+import useAuthStore from '../stores/authStore';
+
+const authStore = new useAuthStore();
+
+const Loading = defineAsyncComponent(() => import('../components/LoadingContent.vue'))
+
+const form = ref({
+    email: '',
+    password: '',
+})
+
+const loading = ref(false)
+
+watch(() => authStore.status, (newValue) => {
+    if (newValue == 'authenticating') {
+        loading.value = true
+    }
+})
+
+onUnmounted(() => {
+    loading.value = false
+})
+
+</script>

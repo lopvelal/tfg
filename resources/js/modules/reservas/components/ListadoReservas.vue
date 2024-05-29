@@ -15,9 +15,21 @@
                     <thead>
                         <tr>
                             <th scope="col">#</th>
-                            <th scope="col">Titulo</th>
-                            <th scope="col">Fecha Actividad</th>
-                            <th scope="col">Aula</th>
+                            <th style="cursor: pointer;" @click="sortBy('titulo')" scope="col">Titulo <i
+                                    v-if="sortField == 'titulo' && sortDirection == 'asc'"
+                                    class="fa-solid fa-arrow-up"></i><i
+                                    v-if="sortField == 'titulo' && sortDirection == 'desc'"
+                                    class="fa-solid fa-arrow-down"></i></th>
+                            <th style="cursor: pointer;" @click="sortBy('fecha')" scope="col">Fecha Actividad <i
+                                    v-if="sortField == 'fecha' && sortDirection == 'asc'"
+                                    class="fa-solid fa-arrow-up"></i><i
+                                    v-if="sortField == 'fecha' && sortDirection == 'desc'"
+                                    class="fa-solid fa-arrow-down"></i></th>
+                            <th style="cursor: pointer;" @click="sortBy('aula_id')" scope="col">Aula <i
+                                    v-if="sortField == 'aula_id' && sortDirection == 'asc'"
+                                    class="fa-solid fa-arrow-up"></i><i
+                                    v-if="sortField == 'aula_id' && sortDirection == 'desc'"
+                                    class="fa-solid fa-arrow-down"></i></th>
                             <th scope="col">Plazas</th>
                             <th scope="col">Acciones</th>
                         </tr>
@@ -29,7 +41,7 @@
                             <td>{{ reserva.fecha }}</td>
                             <td><router-link :to="{ name: 'aula.info', params: { id: reserva.aula.id } }"
                                     class="fw-bold">{{
-            reserva.aula.nombre }} ({{ reserva.aula.alias }})</router-link></td>
+                                        reserva.aula.nombre }} ({{ reserva.aula.alias }})</router-link></td>
                             <td>{{ reserva.plazas_ocupadas ?? 0 }} / {{ reserva.aula.plazas }}</td>
                             <td>
                                 <RouterLink :to="{ name: 'actividad.info', params: { id: reserva.id } }"
@@ -89,12 +101,25 @@ const reservas = ref(null)
 const pagination = ref({})
 const barraBusqueda = ref('')
 
+const sortField = ref(null)
+const sortDirection = ref('asc')
+
+
+const sortBy = (field) => {
+    if (sortField.value === field) {
+        sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc'
+    } else {
+        sortField.value = field
+        sortDirection.value = 'asc'
+    }
+    getReservas()
+}
+
 const autorizado = computed(() => {
     return !authStore.permisos.roles.includes('alumno')
 })
 
 const getReservas = async (url = null) => {
-    console.log(props.miListado);
     if (!props.miListado) {
         if (!url) {
             url = '/api/reservas'
@@ -107,6 +132,9 @@ const getReservas = async (url = null) => {
                 url = '/api/reservas/profesor'
             }
         }
+    }
+    if (sortField.value) {
+        url += (url.includes('?') ? '&' : '?') + `sort_by=${sortField.value}&order=${sortDirection.value}`
     }
     try {
         const { data } = await axios.get(url);

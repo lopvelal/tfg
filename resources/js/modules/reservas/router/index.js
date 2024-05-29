@@ -1,6 +1,7 @@
 import isAuthenticatedGuard from '../../../router/isAuthenticathedGuard';
 import numericIDGuard from '../../../router/numericIDGuard';
 import canCreate from './canCreateGuard';
+import exists from './existsGuard';
 
 export default {
     component: () => import('../layouts/ReservaLayout.vue'),
@@ -20,7 +21,7 @@ export default {
         {
             path: ':id',
             name: 'actividad.info',
-            beforeEnter: [numericIDGuard],
+            beforeEnter: [numericIDGuard, exists],
             component: () => import('../views/Info.vue'),
             props: (route) => {
                 return{

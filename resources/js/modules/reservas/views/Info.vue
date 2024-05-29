@@ -59,13 +59,13 @@
                                 <p class="card-text"><strong>Descripción:</strong> {{ reserva.descripcion }}</p>
                                 <p class="card-text"><strong>Plazas:</strong> {{ reserva.plazas_ocupadas ?? 0 }} /
                                     {{ reserva.aula.plazas }}</p>
-                                <div v-if="autorizado" class="d-flex justify-content-between">
+                                <div v-if="propietario" class="d-flex justify-content-between">
                                     <button @click="modoEdicion = !modoEdicion" class="btn btn-success"><i
                                             class="fa fa-pen me-2"></i>Editar</button>
                                     <button @click="deleteReserva" class="btn btn-danger"><i
                                             class="fa fa-trash me-2"></i>Eliminar</button>
                                 </div>
-                                <div v-else class="d-flex justify-content-center">
+                                <div v-else-if="esAlumno" class="d-flex justify-content-center">
                                     <button v-if="inscrito" @click="bajaAlumno" class="btn btn-danger"><i
                                             class="fa fa-user-minus me-2"></i>Desinscribirme</button>
                                     <button v-else @click="altaAlumno" :disabled="!plazaDisponible" class="btn btn-success"><i
@@ -168,6 +168,15 @@ const posibilidadDosHoras = computed(() => {
 // comprobar si el usuario está autorizado
 const autorizado = computed(() => {
     return !authStore.permisos.roles.includes('alumno')
+})
+
+// comprobar si el usuario es alumno
+const esAlumno = computed(() => {
+    return authStore.permisos.roles.includes('alumno')
+})
+
+const propietario = computed(() => {
+    return authStore.user.id === reserva.value.user_id
 })
 
 // comprobar si hay plazas disponibles
@@ -320,7 +329,7 @@ const deleteReserva = async () => {
         if (result.isConfirmed) {
             try {
                 const { data } = await axios.delete(`/api/reservas/${props.id}`)
-                router.push({ name: 'reservas' }).then(() => {
+                router.push({ name: 'actividades' }).then(() => {
                     Swal.fire({
                         position: "top-end",
                         icon: "success",
@@ -370,7 +379,7 @@ const altaAlumno = async () => {
         }
         await getInfoReserva()
     } catch (error) {
-        console.log(error);
+        console.error(error);
     }
 }
 
@@ -398,7 +407,7 @@ const bajaAlumno = async () => {
         }
         await getInfoReserva()
     } catch (error) {
-        console.log(error);
+        console.error(error);
     }
 }
 /* Fin Operaciones asociadas a los alumnos */
