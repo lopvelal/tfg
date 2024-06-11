@@ -31,7 +31,8 @@ class ReservaController extends Controller
 
         // Construir la consulta
         $query = Reserva::withCount(['reservasUsuarios as plazas_ocupadas'])
-            ->with('aula');
+            ->with('aula')
+            ->whereDate('fecha', '>=', date('Y-m-d'));
 
         // Aplicar ordenación
         $sortBy = $validated['sort_by'] ?? 'fecha'; // Ordenar por 'fecha' por defecto

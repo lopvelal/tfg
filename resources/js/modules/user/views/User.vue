@@ -1,5 +1,8 @@
 <template>
     <div class="container">
+        <div class="mt-3">
+            <h1 class="text-center">Configuración de usuario</h1>
+        </div>
         <div class="row justify-content-center mt-5">
             <div class="col-md-6 col-12">
                 <div class="card">
@@ -30,9 +33,6 @@ import { defineAsyncComponent } from 'vue';
 const PassModal = defineAsyncComponent(() => import('../components/PassModal.vue'))
 
 const authStore = useAuthStore()
-
-
-
 
 </script>
 

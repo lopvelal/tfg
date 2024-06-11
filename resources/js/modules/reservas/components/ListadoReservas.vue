@@ -15,7 +15,7 @@
                     <thead>
                         <tr>
                             <th scope="col">#</th>
-                            <th style="cursor: pointer;" @click="sortBy('titulo')" scope="col">Titulo <i
+                            <th style="cursor: pointer;" @click="sortBy('titulo')" scope="col">Título <i
                                     v-if="sortField == 'titulo' && sortDirection == 'asc'"
                                     class="fa-solid fa-arrow-up"></i><i
                                     v-if="sortField == 'titulo' && sortDirection == 'desc'"
@@ -75,7 +75,7 @@
             <LoadingContent />
         </template>
         <template v-else>
-            <h3 class="text-center"> No se han encontrado registros </h3>
+            <h3 class="text-center mt-4"> No hay ninguna actividad disponible </h3>
         </template>
     </div>
 </template>
@@ -174,4 +174,4 @@ watch(barraBusqueda, (value) => {
 getReservas()
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="css" scoped></style>

@@ -67,7 +67,7 @@
                                 </div>
                                 <div v-else-if="esAlumno" class="d-flex justify-content-center">
                                     <button v-if="inscrito" @click="bajaAlumno" class="btn btn-danger"><i
-                                            class="fa fa-user-minus me-2"></i>Desinscribirme</button>
+                                            class="fa fa-user-minus me-2"></i>Darme de baja</button>
                                     <button v-else @click="altaAlumno" :disabled="!plazaDisponible" class="btn btn-success"><i
                                         class="fa fa-user-plus me-2"></i>Inscribirme</button>
                                 </div>
@@ -91,14 +91,14 @@
                                         <tr>
                                             <th scope="col">Nombre</th>
                                             <th scope="col">Email</th>
-                                            <th scope="col">Acciones</th>
+                                            <th v-if="propietario" scope="col">Acciones</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr v-for="reserva_usuario in reservas_usuarios">
                                             <td>{{ reserva_usuario.user.name }}</td>
                                             <td>{{ reserva_usuario.user.email }}</td>
-                                            <td>
+                                            <td v-if="propietario">
                                                 <a href="#" @click="eliminarUsuarioReserva(reserva_usuario.id)"
                                                     class="text-danger fw-bold">Eliminar</a>
                                             </td>
@@ -175,6 +175,7 @@ const esAlumno = computed(() => {
     return authStore.permisos.roles.includes('alumno')
 })
 
+// comprobar si el usuario es el propietario de la reserva
 const propietario = computed(() => {
     return authStore.user.id === reserva.value.user_id
 })
@@ -239,6 +240,7 @@ const getHorariosDisponiblesFecha = async () => {
         horasDisponibles.value = Object.values(data)
         if (fecha == fechaReserva.value) {
             horasDisponibles.value.push(form.value.hora_inicio)
+            //
             if (form.value.duracion == 2) {
                 let horaString = form.value.hora_inicio
                 let fecha = new Date(`1970-01-01T${horaString}Z`)
@@ -258,7 +260,7 @@ const getHorariosDisponiblesFecha = async () => {
 
 const eliminarUsuarioReserva = async (id) => {
     Swal.fire({
-        title: "¿Estás seguro?",
+        title: "¿Desea dar de baja al alumno?",
         text: "Esta acción no se puede revertir",
         icon: "warning",
         showCancelButton: true,
@@ -317,7 +319,7 @@ const updateInfo = async () => {
 
 const deleteReserva = async () => {
     Swal.fire({
-        title: "¿Quiere dar de baja al alumno?",
+        title: "¿Quiere eliminar la reserva?",
         text: "Esta acción no se puede revertir",
         icon: "warning",
         showCancelButton: true,

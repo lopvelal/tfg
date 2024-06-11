@@ -38,6 +38,7 @@
             </div>
             <div class="d-flex justify-content-between">
                 <button type="submit" class="btn btn-primary"><i class="fa fa-save me-2"></i>Guardar</button>
+                <router-link :to="{name:'actividades'}" class="btn btn-danger"><i class="fa fa-cancel me-2"></i>Cancelar</router-link>
             </div>
         </form>
     </div>
